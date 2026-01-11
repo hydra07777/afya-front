@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import api from '../api/client.js';
+import socketManager from '../api/socket.js';
 
 function AdminDashboardPage() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [data, setData] = useState(null);
+  const [notifications, setNotifications] = useState([]);
+ const [data, setData] = useState(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -23,6 +25,28 @@ function AdminDashboardPage() {
           },
         });
         setData(res.data);
+
+        // Connexion Socket.IO pour les admins
+        socketManager.connect();
+        socketManager.joinAdminRoom();
+
+        // Écouter les notifications globales
+        socketManager.on('admin-notification', (notification) => {
+          console.log('🔔 Notification admin:', notification);
+          setNotifications(prev => [notification, ...prev.slice(0, 9)]); // Garder 10 dernières
+        });
+
+        // Écouter les nouveaux rendez-vous
+        socketManager.on('nouveau-rendez-vous', (rendezVous) => {
+          console.log('📅 Nouveau rendez-vous:', rendezVous);
+          // Recharger les données pour mettre à jour les statistiques
+          load();
+        });
+
+        return () => {
+          socketManager.removeAllListeners();
+          socketManager.disconnect();
+        };
       } catch (err) {
         console.error(err);
         setError('Session expirée, veuillez vous reconnecter.');
@@ -122,6 +146,26 @@ function AdminDashboardPage() {
           <p className="text-2xl font-semibold">{stats.utilisateurs}</p>
         </div>
       </section>
+
+      {/* Notifications temps réel */}
+      {notifications.length > 0 && (
+        <section className="bg-blue-50 border border-blue-200 p-4 rounded shadow text-sm">
+          <h2 className="font-semibold mb-2 text-base flex items-center">
+            <span className="mr-2">🔔</span>
+            Notifications récentes
+          </h2>
+          <div className="space-y-2 max-h-40 overflow-y-auto">
+            {notifications.map((notification, index) => (
+              <div key={index} className="bg-white p-2 rounded border-l-4 border-blue-400">
+                <p className="text-xs text-gray-600">
+                  {new Date(notification.timestamp || Date.now()).toLocaleString('fr-FR')}
+                </p>
+                <p className="text-sm">{notification.message}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       <section className="bg-white p-4 rounded shadow text-sm">
         <h2 className="font-semibold mb-2 text-base">Derniers rendez-vous</h2>

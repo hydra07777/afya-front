@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import api from '../api/client.js';
 
@@ -9,8 +9,11 @@ function AdminComptesPage() {
     prenom: '',
     email: '',
     telephone: '',
-    role: 'user',
+    password: '',
+    hopital_id: '',
+    role: 'hospital_user',
   });
+  const [hopitaux, setHopitaux] = useState([]);
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -34,7 +37,9 @@ function AdminComptesPage() {
         prenom: '',
         email: '',
         telephone: '',
-        role: 'user',
+        password: '',
+        hopital_id: '',
+        role: 'hospital_user',
       });
     } catch (err) {
       console.error(err);
@@ -44,7 +49,26 @@ function AdminComptesPage() {
     }
   };
 
-  const handleLogout = () => {
+  useEffect(() => {
+    const token = localStorage.getItem('afya_admin_token');
+    if (!token) {
+      navigate('/admin/login');
+      return;
+    }
+
+    async function loadHopitaux() {
+      try {
+        const res = await api.get('/hopitaux');
+        setHopitaux(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    loadHopitaux();
+  }, [navigate]);
+
+   const handleLogout = () => {
     localStorage.removeItem('afya_admin_token');
     navigate('/admin/login');
   };
@@ -133,24 +157,29 @@ function AdminComptesPage() {
                 />
               </div>
               <div>
-                <label className="block text-xs mb-1">Téléphone</label>
+                <label className="block text-xs mb-1">Mot de passe</label>
                 <input
-                  name="telephone"
-                  value={form.telephone}
+                  type="password"
+                  name="password"
+                  value={form.password}
                   onChange={handleChange}
                   className="w-full border rounded px-3 py-2"
+                  required
                 />
               </div>
               <div>
-                <label className="block text-xs mb-1">Rôle</label>
+                <label className="block text-xs mb-1">Hôpital</label>
                 <select
-                  name="role"
-                  value={form.role}
+                  name="hopital_id"
+                  value={form.hopital_id}
                   onChange={handleChange}
                   className="w-full border rounded px-3 py-2"
+                  required
                 >
-                  <option value="user">Utilisateur</option>
-                  <option value="admin">Administrateur</option>
+                  <option value="">Sélectionner un hôpital</option>
+                  {hopitaux.map((h) => (
+                    <option key={h.id} value={h.id}>{h.nom}</option>
+                  ))}
                 </select>
               </div>
               <button
