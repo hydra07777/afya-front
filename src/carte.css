@@ -1,0 +1,64 @@
+/* Styles personnalisés pour la carte Leaflet */
+
+.user-location-marker {
+  filter: hue-rotate(120deg) saturate(2) brightness(0.8);
+}
+
+.user-location-marker img {
+  filter: hue-rotate(120deg) saturate(2) brightness(0.8);
+}
+
+/* Indicateur de géolocalisation */
+.location-indicator {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  font-size: 12px;
+  z-index: 1000;
+}
+
+.location-indicator.success {
+  color: #16a34a;
+}
+
+.location-indicator.error {
+  color: #ea580c;
+}
+
+.location-indicator.loading {
+  color: #6b7280;
+}
+
+.location-indicator .indicator-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.location-indicator.success .indicator-dot {
+  background-color: #16a34a;
+}
+
+.location-indicator.error .indicator-dot {
+  background-color: #ea580c;
+}
+
+.location-indicator.loading .indicator-dot {
+  background-color: #6b7280;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
