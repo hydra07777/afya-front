@@ -9,6 +9,8 @@ import AdminDashboardPage from './pages/AdminDashboardPage.jsx';
 import AdminHopitauxPage from './pages/AdminHopitauxPage.jsx';
 import AdminComptesPage from './pages/AdminComptesPage.jsx';
 import AdminRendezVousPage from './pages/AdminRendezVousPage.jsx';
+import UserLoginPage from './pages/UserLoginPage.jsx';
+import UserDashboardPage from './pages/UserDashboardPage.jsx';
 import { useTheme } from './theme/ThemeProvider.jsx';
 
 function App() {
@@ -29,6 +31,7 @@ function App() {
             <Link to="/carte" className="hover:text-teal-600 dark:hover:text-teal-400">Carte</Link>
             <Link to="/rendez-vous" className="hover:text-teal-600 dark:hover:text-teal-400">Rendez-vous</Link>
             <Link to="/infos-sante" className="hover:text-teal-600 dark:hover:text-teal-400">Infos santé</Link>
+            <Link to="/user/login" className="text-[11px] opacity-70 hover:opacity-100">Espace Hôpital</Link>
             <Link to="/admin/login" className="text-[11px] opacity-70 hover:opacity-100">Admin</Link>
             <button
               type="button"
@@ -54,6 +57,8 @@ function App() {
           <Route path="/admin/hopitaux" element={<AdminHopitauxPage />} />
           <Route path="/admin/comptes" element={<AdminComptesPage />} />
           <Route path="/admin/rendez-vous" element={<AdminRendezVousPage />} />
+          <Route path="/user/login" element={<UserLoginPage />} />
+          <Route path="/user/dashboard" element={<UserDashboardPage />} />
         </Routes>
       </main>
 
